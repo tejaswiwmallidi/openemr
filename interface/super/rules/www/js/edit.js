@@ -4,18 +4,34 @@
 var rule_edit = function( args ) {
 
     var fn_work = function() {
+       $(".form-control").each( function() {
+            $(this).attr("placeholder","Enter a number");
+            $(this).attr("pattern","[0-9]+");
+            $(this).on('input', function() {
+                if (this.value.match(/[^0-9]/)) {
+                    var currentValue = this.value;
+                    var newValue = currentValue.replace(/[^0-9]/g, '');
+                    this.value = newValue;
+                    this.setCustomValidity('Please enter a valid integer.');
+                } else {
+                    this.setCustomValidity('');
+                }
+                this.reportValidity();
+            });
+            $(this).on('keydown', function(event) {
+                if (event.key === 'e' || event.key === '.' || event.key === '-') {
+                    event.preventDefault();
+                }
+            });
+        });
+
         // setup required
         $(".req").each( function() {
             var txt = $(this).text();
-            txt = "<span class='required'>*</span>" + txt;
-            $(this).html( txt );
-        });
-
-        if ($(".req").length > 0) {
+@@ -15,7 +36,6 @@ var rule_edit = function( args ) {
             $("#required_msg").show();
         }
     }
-
     var fn_validate = function() {
         String.prototype.trim = function() {
             return this.replace(/^\s+|\s+$/g,"");
